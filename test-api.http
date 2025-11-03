@@ -1,0 +1,187 @@
+### API Testing untuk Sistem Antrian RS
+### Gunakan REST Client extension di VS Code atau Postman
+
+@baseUrl = http://localhost:8000/api
+
+### ========================================
+### LOKET ENDPOINTS
+### ========================================
+
+### 1. Get All Lokets
+GET {{baseUrl}}/lokets
+Content-Type: application/json
+
+### 2. Create New Loket
+POST {{baseUrl}}/lokets
+Content-Type: application/json
+
+{
+  "nama_loket": "Poli Mata",
+  "deskripsi": "Loket untuk layanan poli mata",
+  "kode": "D"
+}
+
+### 3. Get Specific Loket
+GET {{baseUrl}}/lokets/1
+Content-Type: application/json
+
+### 4. Update Loket
+PUT {{baseUrl}}/lokets/1
+Content-Type: application/json
+
+{
+  "nama_loket": "PENDAFTARAN VIP",
+  "deskripsi": "Loket untuk pendaftaran pasien VIP",
+  "kode": "A"
+}
+
+### 5. Delete Loket
+DELETE {{baseUrl}}/lokets/4
+Content-Type: application/json
+
+### ========================================
+### ANTRIAN ENDPOINTS
+### ========================================
+
+### 6. Get All Antrians
+GET {{baseUrl}}/antrians
+Content-Type: application/json
+
+### 7. Get Antrians by Loket
+GET {{baseUrl}}/antrians?loket_id=1
+Content-Type: application/json
+
+### 8. Get Antrians by Status
+GET {{baseUrl}}/antrians?status=menunggu
+Content-Type: application/json
+
+### 9. Get Antrians by Loket and Status
+GET {{baseUrl}}/antrians?loket_id=1&status=menunggu
+Content-Type: application/json
+
+### 10. Ambil Nomor Antrian Baru (Loket A)
+POST {{baseUrl}}/antrians
+Content-Type: application/json
+
+{
+  "loket_id": 1
+}
+
+### 11. Ambil Nomor Antrian Baru (Loket B)
+POST {{baseUrl}}/antrians
+Content-Type: application/json
+
+{
+  "loket_id": 2
+}
+
+### 12. Ambil Nomor Antrian Baru (Loket C)
+POST {{baseUrl}}/antrians
+Content-Type: application/json
+
+{
+  "loket_id": 3
+}
+
+### 13. Get Specific Antrian
+GET {{baseUrl}}/antrians/1
+Content-Type: application/json
+
+### 14. Panggil Antrian (Update status ke 'dipanggil')
+PUT {{baseUrl}}/antrians/1
+Content-Type: application/json
+
+{
+  "status": "dipanggil"
+}
+
+### 15. Selesaikan Antrian (Update status ke 'selesai')
+PUT {{baseUrl}}/antrians/1
+Content-Type: application/json
+
+{
+  "status": "selesai"
+}
+
+### 16. Get Antrian yang Sedang Dipanggil (Semua Loket)
+GET {{baseUrl}}/antrians/dipanggil
+Content-Type: application/json
+
+### 17. Get Antrian yang Sedang Dipanggil (Loket Tertentu)
+GET {{baseUrl}}/antrians/dipanggil?loket_id=1
+Content-Type: application/json
+
+### 18. Delete Antrian
+DELETE {{baseUrl}}/antrians/5
+Content-Type: application/json
+
+### ========================================
+### TESTING FLOW LENGKAP
+### ========================================
+
+### Flow 1: Pasien Ambil Nomor di Loket A
+POST {{baseUrl}}/antrians
+Content-Type: application/json
+
+{
+  "loket_id": 1
+}
+
+### Flow 2: Petugas Panggil Antrian Pertama
+# Ganti {id} dengan ID dari response di atas
+PUT {{baseUrl}}/antrians/1
+Content-Type: application/json
+
+{
+  "status": "dipanggil"
+}
+
+### Flow 3: Display Menampilkan Antrian yang Dipanggil
+GET {{baseUrl}}/antrians/dipanggil
+Content-Type: application/json
+
+### Flow 4: Selesai Dilayani
+PUT {{baseUrl}}/antrians/1
+Content-Type: application/json
+
+{
+  "status": "selesai"
+}
+
+### ========================================
+### ERROR TESTING
+### ========================================
+
+### Error 1: Loket ID tidak ada
+POST {{baseUrl}}/antrians
+Content-Type: application/json
+
+{
+  "loket_id": 999
+}
+
+### Error 2: Status tidak valid
+PUT {{baseUrl}}/antrians/1
+Content-Type: application/json
+
+{
+  "status": "invalid_status"
+}
+
+### Error 3: Kode loket duplikat
+POST {{baseUrl}}/lokets
+Content-Type: application/json
+
+{
+  "nama_loket": "Test Loket",
+  "deskripsi": "Test",
+  "kode": "A"
+}
+
+### Error 4: Missing required field
+POST {{baseUrl}}/lokets
+Content-Type: application/json
+
+{
+  "nama_loket": "Test Loket"
+}
